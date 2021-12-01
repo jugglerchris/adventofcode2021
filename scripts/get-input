@@ -5,12 +5,12 @@ day=$1
 # Keep session key here
 . cookies.sh
 
-wget --no-cookies --header "Cookie: session=$SESSION" https://adventofcode.com/2020/day/$day/input && mv input data/day$day.txt
+wget --no-cookies --header "Cookie: session=$SESSION" https://adventofcode.com/2021/day/$day/input && mv input data/day$day.txt
 
 git add data/day$day.txt
 git commit -m"Add day $day input" data/day$day.txt
 
 if [ ! -f src/day${day}.cpp ]; then
-    sed -e "s/\\\$N/$day/g" < template/dayN.cpp > src/day${day}.cpp
-    git add src/day${day}.cpp
+    sed -e "s/\\\$N/$day/g" < examples/dayN.rs > examples/day${day}.rs
+    git add examples/day${day}.rs
 fi
