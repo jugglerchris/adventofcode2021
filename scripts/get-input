@@ -10,7 +10,7 @@ wget --no-cookies --header "Cookie: session=$SESSION" https://adventofcode.com/2
 git add data/day$day.txt
 git commit -m"Add day $day input" data/day$day.txt
 
-if [ ! -f src/day${day}.cpp ]; then
-    sed -e "s/\\\$N/$day/g" < examples/dayN.rs > examples/day${day}.rs
+if [ ! -f examples/day${day}.rs ]; then
+    sed -e "s/\\\$N/$day/g" < examples/template.rs > examples/day${day}.rs
     git add examples/day${day}.rs
 fi
