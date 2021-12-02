@@ -1,4 +1,4 @@
-use adventofcode2019::{get_input,parse_lines};
+use adventofcode2021::{get_input,parse_lines};
 fn main() -> std::io::Result<()>{
     let input = get_input($N)?;
 
