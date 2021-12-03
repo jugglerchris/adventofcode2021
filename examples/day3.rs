@@ -24,7 +24,40 @@ fn reduce_using<F:Fn(usize, usize) -> usize>(data: &[String], keep_digit: F) -> 
         col += 1;
     }
     assert_eq!(remaining.len(), 1);
-    return usize::from_str_radix(remaining[0], 2).unwrap();
+    usize::from_str_radix(remaining[0], 2).unwrap()
+}
+
+fn get_ox_gen_rating(data: &[String]) -> usize {
+    reduce_using(data,
+        |ones, total| {
+            if ones*2 >= total { 1 } else { 0 }
+        })
+}
+fn get_co2_scrubber_rating(data: &[String]) -> usize {
+    reduce_using(data,
+        |ones, total| {
+            if ones*2 >= total { 0 } else { 1 }
+        })
+}
+
+#[test]
+fn test_reduce_using() {
+    let test_data: Vec<String> = vec![
+        "00100".into(),
+        "11110".into(),
+        "10110".into(),
+        "10111".into(),
+        "10101".into(),
+        "01111".into(),
+        "00111".into(),
+        "11100".into(),
+        "10000".into(),
+        "11001".into(),
+        "00010".into(),
+        "01010".into(),
+    ];
+    assert_eq!(get_ox_gen_rating(&test_data), 23);
+    assert_eq!(get_co2_scrubber_rating(&test_data), 10);
 }
 
 fn main() -> std::io::Result<()>{
@@ -56,16 +89,8 @@ fn main() -> std::io::Result<()>{
     println!("{}", gamma*epsilon);
 
     // Part 2
-    let ox_gen_rating = reduce_using(
-        &data,
-        |ones, total| {
-            if ones*2 >= total { 1 } else { 0 }
-        });
-    let co2_scrubber_rating = reduce_using(
-        &data,
-        |ones, total| {
-            if ones*2 <= total { 0 } else { 1 }
-        });
+    let ox_gen_rating = get_ox_gen_rating(&data);
+    let co2_scrubber_rating = get_co2_scrubber_rating(&data);
     println!("{}", ox_gen_rating*co2_scrubber_rating);
 
     Ok(())
