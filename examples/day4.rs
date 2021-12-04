@@ -1,16 +1,43 @@
 use adventofcode2021::{get_input};
 
-type Number = u8;
+type Number = usize;
 
+#[derive(Clone, Debug)]
 struct BingoCard {
     data: [Number; 25],
+    row_remain: [u8; 5],
+    col_remain: [u8; 5],
 }
 
 impl BingoCard {
-    pub fn from(ns: &[u8]) -> BingoCard {
+    pub fn from(ns: &[Number]) -> BingoCard {
         BingoCard {
             data: ns.try_into().unwrap(),
+            row_remain: [5; 5],
+            col_remain: [5; 5],
         }
+    }
+
+    pub fn call(&mut self, number: Number) -> bool {
+        match self.data
+            .iter()
+            .enumerate()
+            .find(|(_i, n)| **n == number)
+        {
+            None => false,
+            Some((i, n)) => {
+                let row = i/5;
+                let col = i%5;
+                self.data[i] = 0;
+                self.row_remain[row] -= 1;
+                self.col_remain[col] -= 1;
+                self.row_remain[row] == 0 || self.col_remain[col] == 0
+            }
+        }
+    }
+
+    pub fn score(&self) -> usize {
+        self.data.iter().sum()
     }
 }
 
@@ -25,7 +52,7 @@ fn main() -> std::io::Result<()>{
 
     assert_eq!(lines[1], "");
     let remain = &input[lines[0].len()..];
-    let card_numbers: Vec<u8> = remain
+    let card_numbers: Vec<Number> = remain
         .split_whitespace()
         .map(|s| s.parse().unwrap())
         .collect();
@@ -36,7 +63,18 @@ fn main() -> std::io::Result<()>{
         .collect::<Vec<_>>();
 
     // Part 1
-    println!("Got {} numbers and {} cards", numbers_called.len(), cards.len());
+    {
+        let mut cards = cards.clone();
+        'outer: for n in &numbers_called {
+            for card in &mut cards {
+                if card.call(*n) {
+                    println!("Card called with score {}",
+                             card.score() * n);
+                    break 'outer;
+                }
+            }
+        }
+    }
 
     // Part 2
 
