@@ -109,6 +109,51 @@ pub fn part1(lines: &[Line]) -> usize {
     return overlaps;
 }
 
+pub fn part2(lines: &[Line]) -> usize {
+    let mut field = Field::new();
+    {
+        for line in lines {
+            if line.is_horiz() {
+                #[cfg(test)]
+                println!("Horiz: {:?}", line);
+                let x1 = line.x1.min(line.x2);
+                let x2 = line.x1.max(line.x2);
+                for x in x1..=x2 {
+                    field.insert(x, line.y1);
+                }
+            } else if line.is_vert() {
+                #[cfg(test)]
+                println!("Vert: {:?}", line);
+                let y1 = line.y1.min(line.y2);
+                let y2 = line.y1.max(line.y2);
+                for y in y1..=y2 {
+                    field.insert(line.x1, y);
+                }
+            } else {
+                assert_eq!((line.x1 - line.x2).abs(),
+                           (line.y1 - line.y2).abs());
+                #[cfg(test)]
+                println!("Diagonal: {:?}", line);
+                let x_inc = if line.x2 > line.x1 { 1 } else { -1 };
+                let y_inc = if line.y2 > line.y1 { 1 } else { -1 };
+                let len = (line.x2 - line.x1).abs();
+                for i in 0..=len {
+                    field.insert(line.x1 + i*x_inc, line.y1 + i*y_inc);
+                }
+            }
+        }
+    }
+    #[cfg(test)]
+    field.print();
+    let mut overlaps = 0;
+    for (_, &n) in field.iter() {
+        if n > 1 {
+            overlaps += 1;
+        }
+    }
+    return overlaps;
+}
+
 #[test]
 fn test_part1() {
     let lines = parse_lines(r#"0,9 -> 5,9
@@ -124,6 +169,21 @@ fn test_part1() {
 "#);
     assert_eq!(part1(&lines), 5);
 }
+#[test]
+fn test_part2() {
+    let lines = parse_lines(r#"0,9 -> 5,9
+8,0 -> 0,8
+9,4 -> 3,4
+2,2 -> 2,1
+7,0 -> 7,4
+6,4 -> 2,0
+0,9 -> 2,9
+3,4 -> 1,4
+0,0 -> 8,8
+5,5 -> 8,2
+"#);
+    assert_eq!(part2(&lines), 12);
+}
 
 fn main() -> std::io::Result<()>{
     let input = get_input(5)?;
@@ -134,20 +194,7 @@ fn main() -> std::io::Result<()>{
     println!("{}", part1(&lines));
 
     // Part 2
-    /*
-    println!("{}", increments.iter()
-                             .map(|mass| {
-                                 let mut mass = *mass;
-                                 let mut fuel = 0;
-                                 while mass > 5 {
-                                     let f = mass/3 - 2;
-                                     fuel += f;
-                                     mass = f;
-                                 }
-                                 fuel
-                              })
-                             .sum::<u32>());
-    */
+    println!("{}", part2(&lines));
 
     Ok(())
 }
