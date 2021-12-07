@@ -13,6 +13,20 @@ fn part1(positions: &[Coord]) -> isize {
     }).min().unwrap()
 }
 
+fn part2(positions: &[Coord]) -> isize {
+    let min = positions.iter().cloned().min().unwrap();
+    let max = positions.iter().cloned().max().unwrap();
+
+    (min..=max).map(|v| {
+        positions.iter()
+                 .map(|p| {
+                     let dist = (*p - v).abs();
+                     dist * (dist+1) / 2
+                 })
+                 .sum()
+    }).min().unwrap()
+}
+
 #[test]
 fn test() {
     let positions: Vec<Coord> = "16,1,2,0,4,2,7,1,2,14"
@@ -21,6 +35,7 @@ fn test() {
         .collect();
 
     assert_eq!(part1(&positions), 37);
+    assert_eq!(part2(&positions), 168);
 }
 
 fn main() -> std::io::Result<()>{
@@ -35,9 +50,7 @@ fn main() -> std::io::Result<()>{
     println!("{}", &part1(&positions));
 
     // Part 2
-    /*
-    println!("{}", &part2(positions));
-    */
+    println!("{}", &part2(&positions));
 
     Ok(())
 }
