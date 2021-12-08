@@ -1,29 +1,31 @@
 use adventofcode2021::{get_input,parse_lines};
+
+fn part1(data: &[u32]) -> usize {
+    unimplemented!()
+}
+fn part2(data: &[u32]) -> usize {
+    unimplemented!()
+}
+
+#[test]
+fn test() {
+    let tests = r#""#;
+    let data: Vec<u32> = parse_lines(&tests);
+
+    assert_eq!(part1(&data), -1);
+    assert_eq!(part2(&data), -1);
+}
+
 fn main() -> std::io::Result<()>{
     let input = get_input($N)?;
 
-    let increments: Vec<u32> = parse_lines(&input);
+    let data: Vec<u32> = parse_lines(&input);
 
     // Part 1
-    println!("{}", increments.iter()
-                             .map(|mass| mass/3 - 2)
-                             .sum::<u32>());
+    println!("{}", part1(&data));
 
     // Part 2
-    /*
-    println!("{}", increments.iter()
-                             .map(|mass| {
-                                 let mut mass = *mass;
-                                 let mut fuel = 0;
-                                 while mass > 5 {
-                                     let f = mass/3 - 2;
-                                     fuel += f;
-                                     mass = f;
-                                 }
-                                 fuel
-                              })
-                             .sum::<u32>());
-    */
+    println!("{}", part2(&data));
 
     Ok(())
 }
