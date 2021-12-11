@@ -85,7 +85,16 @@ fn part1(data: &Grid) -> usize {
     grid.flashes
 }
 fn part2(data: &Grid) -> usize {
-    unimplemented!()
+    let mut grid = data.clone();
+    let mut i = 1;
+    loop {
+        let pre_flashes = grid.flashes;
+        grid.step();
+        if grid.flashes - pre_flashes == 100 {
+            return i;
+        }
+        i += 1;
+    }
 }
 
 #[test]
@@ -103,7 +112,7 @@ fn test() {
     let data = Grid::from(tests);
 
     assert_eq!(part1(&data), 1656);
-    assert_eq!(part2(&data), 0);
+    assert_eq!(part2(&data), 195);
 }
 
 fn main() -> std::io::Result<()>{
