@@ -12,8 +12,8 @@ fn test() {
     let tests = r#""#;
     let data: Vec<u32> = parse_lines(&tests);
 
-    assert_eq!(part1(&data), -1);
-    assert_eq!(part2(&data), -1);
+    assert_eq!(part1(&data), 0);
+    assert_eq!(part2(&data), 0);
 }
 
 fn main() -> std::io::Result<()>{
