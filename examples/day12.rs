@@ -13,11 +13,6 @@ regex_parser!(parse_link: Link {
     LINK = r#"^(\w+)-(\w+)$"# => |a: String, b: String| Link(a, b)
 });
 
-enum Action {
-    Continue,
-    Finish,
-}
-
 fn is_small(s: &str) -> bool {
     s.chars().next().unwrap().is_ascii_lowercase()
 }
