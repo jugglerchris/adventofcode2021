@@ -53,7 +53,6 @@ fn do_fold(points: &HashSet<Point>, fold: &Fold) -> HashSet<Point> {
     results
 }
 
-#[cfg(test)]
 fn draw_paper(points: &HashSet<Point>) {
     let mut points = points.iter().cloned().collect::<Vec<Point>>();
     points.sort_by_key(|&Point(x, y)| (y, x));
@@ -84,8 +83,13 @@ fn part1(points: &[Point], folds: &[Fold]) -> usize {
     draw_paper(&newpoints);
     newpoints.len()
 }
-fn part2(points: &[Point], folds: &[Fold]) -> usize {
-    unimplemented!()
+fn part2(points: &[Point], folds: &[Fold]) {
+    let mut points: HashSet<Point> = points.iter().cloned().collect();
+    for fold in folds {
+        let newpoints = do_fold(&points, &fold);
+        points = newpoints;
+    }
+    draw_paper(&points);
 }
 
 
@@ -119,7 +123,7 @@ fold along x=5"#;
     let folds: Vec<Fold> = parse_lines(parts[1]);
 
     assert_eq!(part1(&points, &folds), 17);
-    assert_eq!(part2(&points, &folds), 0);
+//    assert_eq!(part2(&points, &folds), 0);
 }
 
 fn main() -> std::io::Result<()>{
@@ -134,7 +138,7 @@ fn main() -> std::io::Result<()>{
     println!("{}", part1(&points, &folds));
 
     // Part 2
-    println!("{}", part2(&points, &folds));
+    part2(&points, &folds);
 
     Ok(())
 }
