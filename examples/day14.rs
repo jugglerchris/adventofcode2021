@@ -63,8 +63,34 @@ fn part1(template: &str, rules: &[Rule]) -> usize {
     let max = counts.iter().filter(|&count| *count != 0).max().unwrap();
     max - min
 }
-fn part2(tempalte: &str, rules: &[Rule]) -> usize {
-    unimplemented!()
+fn part2(template: &str, rules: &[Rule]) -> usize {
+    let rules: HashMap<(u8, u8), u8> =
+        rules.into_iter()
+             .map(|Rule { left, right, new }| ((*left, *right), *new))
+             .collect();
+
+    let mut counts = vec![0usize; 26];
+    // Count hte final char
+    let s = template.as_bytes().iter().cloned().collect::<Vec<u8>>();
+    counts[s[s.len() - 1] as usize - (b'A' as usize)] = 1;
+    for w in s.windows(2) {
+        let mut s: Vec<u8> = w.iter().cloned().collect::<Vec<u8>>();
+        for _ in 0..40 {
+            s = step(&s, &rules);
+        }
+        s.pop().unwrap(); // Don't double count the edge one
+        for c in s {
+            match c {
+                b'A'..=b'Z' => {
+                    counts[c as usize - (b'A' as usize)] += 1;
+                }
+                _ => panic!(),
+            }
+        }
+    }
+    let min = counts.iter().filter(|&count| *count != 0).min().unwrap();
+    let max = counts.iter().filter(|&count| *count != 0).max().unwrap();
+    max - min
 }
 
 #[test]
@@ -90,7 +116,7 @@ CN -> C"#;
     let (template, rules) = parse_input(&tests);
 
     assert_eq!(part1(&template, &rules), 1588);
-    assert_eq!(part2(&template, &rules), 1588);
+    assert_eq!(part2(&template, &rules), 2188189693529);
 }
 
 fn main() -> std::io::Result<()>{
