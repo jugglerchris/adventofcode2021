@@ -63,33 +63,51 @@ fn part1(template: &str, rules: &[Rule]) -> usize {
     let max = counts.iter().filter(|&count| *count != 0).max().unwrap();
     max - min
 }
+
+type CharCount = HashMap<u8, usize>;
+
+fn count_lengths(left: u8, right: u8, depth: usize, cache: &mut HashMap<(u8, u8, usize), CharCount>, rules: &HashMap<(u8, u8), u8>) -> CharCount {
+    if let Some(cc) = cache.get(&(left, right, depth)) {
+        return cc.clone();
+    }
+    if depth == 0 {
+        let mut result = HashMap::new();
+        result.insert(left, 1);
+        return result;
+    }
+    let counts = if let Some(&n) = rules.get(&(left, right)) {
+        let mut cc1 = count_lengths(left, n, depth-1, cache, rules);
+        let cc2 = count_lengths(n, right, depth-1, cache, rules);
+        for (k,v) in cc2.into_iter() {
+            *cc1.entry(k).or_default() += v;
+        }
+        cc1
+    } else {
+        count_lengths(left, right, depth-1, cache, rules)
+    };
+    cache.insert((left, right, depth), counts.clone());
+    counts
+}
+
 fn part2(template: &str, rules: &[Rule]) -> usize {
     let rules: HashMap<(u8, u8), u8> =
         rules.into_iter()
              .map(|Rule { left, right, new }| ((*left, *right), *new))
              .collect();
 
-    let mut counts = vec![0usize; 26];
+    let mut cache = HashMap::new();
+    let mut all_counts = vec![0usize; 26];
     // Count hte final char
     let s = template.as_bytes().iter().cloned().collect::<Vec<u8>>();
-    counts[s[s.len() - 1] as usize - (b'A' as usize)] = 1;
+    all_counts[s[s.len() - 1] as usize - (b'A' as usize)] = 1;
     for w in s.windows(2) {
-        let mut s: Vec<u8> = w.iter().cloned().collect::<Vec<u8>>();
-        for _ in 0..40 {
-            s = step(&s, &rules);
-        }
-        s.pop().unwrap(); // Don't double count the edge one
-        for c in s {
-            match c {
-                b'A'..=b'Z' => {
-                    counts[c as usize - (b'A' as usize)] += 1;
-                }
-                _ => panic!(),
-            }
+        let counts = count_lengths(w[0], w[1], 40, &mut cache, &rules);
+        for (c, count) in counts.into_iter() {
+            all_counts[(c - b'A') as usize] += count;
         }
     }
-    let min = counts.iter().filter(|&count| *count != 0).min().unwrap();
-    let max = counts.iter().filter(|&count| *count != 0).max().unwrap();
+    let min = all_counts.iter().filter(|&count| *count != 0).min().unwrap();
+    let max = all_counts.iter().filter(|&count| *count != 0).max().unwrap();
     max - min
 }
 
