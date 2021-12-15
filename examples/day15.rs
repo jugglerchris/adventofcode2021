@@ -44,8 +44,24 @@ fn part1(data: &[Vec<u8>]) -> isize {
     }
     panic!()
 }
-fn part2(_data: &[Vec<u8>]) -> usize {
-    unimplemented!()
+fn part2(data: &[Vec<u8>]) -> isize {
+    let mut new_data = Vec::new();
+    for y_inc in 0..5 {
+        for row in data {
+            let mut new_row = Vec::new();
+            for x_inc in 0..5 {
+                for v in row {
+                    let mut new_v = v + x_inc + y_inc;
+                    while new_v > 9 {
+                        new_v -= 9;
+                    }
+                    new_row.push(new_v);
+                }
+            }
+            new_data.push(new_row);
+        }
+    }
+    part1(&new_data)
 }
 
 fn parse_input(input: &str) -> Vec<Vec<u8>> {
@@ -73,7 +89,7 @@ fn test() {
     let data = parse_input(&input);
 
     assert_eq!(part1(&data), 40);
-    assert_eq!(part2(&data), 0);
+    assert_eq!(part2(&data), 315);
 }
 
 fn main() -> std::io::Result<()>{
