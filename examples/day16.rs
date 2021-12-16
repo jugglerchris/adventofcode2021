@@ -61,9 +61,10 @@ struct Packet {
 }
 
 fn parse_packet(bs: &mut BitStream, depth: usize) -> Packet {
+    #[cfg(test)]
     dbg!((depth, bs.get_pos()));
-    let version = dbg!(bs.read_bits(3));
-    let type_id = dbg!(bs.read_bits(3));
+    let version = bs.read_bits(3);
+    let type_id = bs.read_bits(3);
     match type_id {
         4 => {
             let mut v = 0;
@@ -75,26 +76,26 @@ fn parse_packet(bs: &mut BitStream, depth: usize) -> Packet {
                 }
             }
             let payload = Payload::Literal(v);
-            dbg!(Packet { version, type_id, payload })
+            Packet { version, type_id, payload }
         }
         _ => {
             let mode = bs.read_bits(1);
             let mut sub_packets = Vec::new();
-            if dbg!(mode) == 0 {
+            if mode == 0 {
                 let sub_packets_length = bs.read_bits(15);
                 let end_pos = bs.get_pos() + sub_packets_length;
-                while dbg!(bs.get_pos()) < dbg!(end_pos) {
+                while bs.get_pos() < end_pos {
                     sub_packets.push(parse_packet(bs, depth+1));
                 }
                 assert_eq!(bs.get_pos(), end_pos);
             } else {
                 let num_sub_packets = bs.read_bits(11);
-                for _ in 0..dbg!(num_sub_packets) {
+                for _ in 0..num_sub_packets {
                     sub_packets.push(parse_packet(bs, depth+1));
                 }
             }
             let payload = Payload::Operator(sub_packets);
-            dbg!(Packet { version, type_id, payload })
+            Packet { version, type_id, payload }
         }
     }
 }
