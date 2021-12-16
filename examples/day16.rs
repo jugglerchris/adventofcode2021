@@ -116,8 +116,45 @@ fn part1(data: &str) -> usize {
 
     add_versions(&packet)
 }
-fn part2(data: &[u32]) -> usize {
-    unimplemented!()
+
+fn eval(packet: &Packet) -> usize {
+    match &packet.payload {
+        Payload::Literal(n) => *n,
+        Payload::Operator(vs) => {
+            match packet.type_id {
+                0 => vs.iter().map(eval).sum(),
+                1 => vs.iter().map(eval).product(),
+                2 => vs.iter().map(eval).min().unwrap(),
+                3 => vs.iter().map(eval).max().unwrap(),
+                5 => {
+                    assert_eq!(vs.len(), 2);
+                    let a = eval(&vs[0]);
+                    let b = eval(&vs[1]);
+                    if a > b { 1 } else { 0 }
+                }
+                6 => {
+                    assert_eq!(vs.len(), 2);
+                    let a = eval(&vs[0]);
+                    let b = eval(&vs[1]);
+                    if a < b { 1 } else { 0 }
+                }
+                7 => {
+                    assert_eq!(vs.len(), 2);
+                    let a = eval(&vs[0]);
+                    let b = eval(&vs[1]);
+                    if a == b { 1 } else { 0 }
+                }
+                _ => panic!()
+            }
+        }
+    }
+}
+
+fn part2(data: &str) -> usize {
+    let mut bs = BitStream::from_hex(data);
+    let packet = parse_packet(&mut bs, 0);
+
+    eval(&packet)
 }
 
 #[test]
@@ -131,7 +168,15 @@ fn test() {
     assert_eq!(part1(&test2), 12);
     assert_eq!(part1(&test3), 23);
     assert_eq!(part1(&test4), 31);
-//    assert_eq!(part2(&data), 0);
+
+    assert_eq!(part2("C200B40A82"), 3);
+    assert_eq!(part2("04005AC33890"), 54);
+    assert_eq!(part2("880086C3E88112"), 7);
+    assert_eq!(part2("CE00C43D881120"), 9);
+    assert_eq!(part2("D8005AC2A8F0"), 1);
+    assert_eq!(part2("F600BC2D8F"), 0);
+    assert_eq!(part2("9C005AC2F8F0"), 0);
+    assert_eq!(part2("9C0141080250320F1802104A08"), 1);
 }
 
 fn main() -> std::io::Result<()>{
@@ -141,7 +186,7 @@ fn main() -> std::io::Result<()>{
     println!("{}", part1(&input));
 
     // Part 2
-//    println!("{}", part2(&data));
+    println!("{}", part2(&input));
 
     Ok(())
 }
