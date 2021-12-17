@@ -14,7 +14,7 @@ regex_parser!(parse_area: TargetArea {
         |x0: isize, x1: isize, y0: isize, y1: isize| TargetArea { x0, x1, y0, y1 }
 });
 
-fn part1(area: &TargetArea) -> isize {
+fn part12(area: &TargetArea) -> (isize, usize) {
     // Map from valid x velocities to list of time steps within the target area.
     let mut valid_vx: Vec<isize> = Vec::new();
 
@@ -39,7 +39,8 @@ fn part1(area: &TargetArea) -> isize {
     }
 
     let mut overall_max_y = 0;
-    for vy_i in 1..(area.y0.abs()+1) {
+    let mut num_velocities = 0;
+    for vy_i in (area.y0-1)..(area.y0.abs()+1) {
         let mut max_y = 0;
         let mut vy = vy_i;
         let mut vx_x: Vec<(isize, isize)> = valid_vx.iter().map(|vx| (*vx, 0)).collect();
@@ -64,6 +65,11 @@ fn part1(area: &TargetArea) -> isize {
                     continue;
                 } else if x >= area.x0 {
                     in_x = true;
+                    if in_y {
+                        // We're in the square - can stop looking at this one.
+                        num_velocities += 1;
+                        continue;
+                    }
                 }
                 if vx >= 1 {
                     vx -= 1;
@@ -76,10 +82,7 @@ fn part1(area: &TargetArea) -> isize {
             }
         }
     }
-    overall_max_y
-}
-fn part2(area: &TargetArea) -> isize {
-    unimplemented!()
+    (overall_max_y, num_velocities)
 }
 
 #[test]
@@ -87,8 +90,7 @@ fn test() {
     let input = r#"target area: x=20..30, y=-10..-5"#;
     let area: TargetArea = <TargetArea as FromStr>::from_str(input).unwrap();
 
-    assert_eq!(part1(&area), 45);
-    assert_eq!(part2(&area), 0);
+    assert_eq!(part12(&area), (45, 112));
 }
 
 fn main() -> std::io::Result<()>{
@@ -96,11 +98,8 @@ fn main() -> std::io::Result<()>{
 
     let area: TargetArea = <TargetArea as FromStr>::from_str(&input).unwrap();
 
-    // Part 1
-    println!("{}", part1(&area));
-
-    // Part 2
-    println!("{}", part2(&area));
+    // Part 1 and 2
+    println!("{:?}", part12(&area));
 
     Ok(())
 }
