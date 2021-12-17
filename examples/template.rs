@@ -1,16 +1,20 @@
 use adventofcode2021::{get_input,parse_lines};
 
-fn part1(data: &[u32]) -> usize {
+type Data = ();
+fn parse_input(input: &str) -> Data {
+}
+
+fn part1(data: &Data) -> usize {
     unimplemented!()
 }
-fn part2(data: &[u32]) -> usize {
+fn part2(data: &Data) -> usize {
     unimplemented!()
 }
 
 #[test]
 fn test() {
     let tests = r#""#;
-    let data: Vec<u32> = parse_lines(&tests);
+    let data = parse_input(&tests);
 
     assert_eq!(part1(&data), 0);
     assert_eq!(part2(&data), 0);
@@ -19,7 +23,7 @@ fn test() {
 fn main() -> std::io::Result<()>{
     let input = get_input($N)?;
 
-    let data: Vec<u32> = parse_lines(&input);
+    let data = parse_input(&input);
 
     // Part 1
     println!("{}", part1(&data));
