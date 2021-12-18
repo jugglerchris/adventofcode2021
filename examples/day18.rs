@@ -74,6 +74,7 @@ enum ExplodeResult {
     },
 }
 
+#[cfg(test)]
 impl ExplodeResult {
     fn unwrap(self) -> SnailNumber {
         match self {
@@ -244,8 +245,16 @@ fn part1(data: &Data) -> Numb {
     }
     magnitude(&sum)
 }
-fn part2(_data: &Data) -> Numb {
-    unimplemented!()
+fn part2(data: &Data) -> Numb {
+    let mut best = 0;
+    for n1 in data {
+        for n2 in data {
+            if n1 != n2 {
+                best = best.max(part1(&vec![n1.clone(), n2.clone()]));
+            }
+        }
+    }
+    best
 }
 
 #[test]
@@ -303,7 +312,7 @@ fn test() {
     let data = parse_input(&tests);
 
     assert_eq!(part1(&data), 4140);
-    assert_eq!(part2(&data), 0);
+    assert_eq!(part2(&data), 3993);
 }
 
 fn main() -> std::io::Result<()>{
