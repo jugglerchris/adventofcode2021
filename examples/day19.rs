@@ -8,6 +8,11 @@ pub struct Point {
     z: isize,
 }
 
+impl Point {
+    pub fn manhattan(&self) -> isize {
+        self.x.abs() + self.y.abs() + self.z.abs()
+    }
+}
 impl std::ops::Add for Point {
     type Output = Point;
     fn add(self, rhs: Point) -> Point {
@@ -110,12 +115,14 @@ fn get_map(from: (Point, Point), to: (Point, Point)) -> Option<(u8, Point)>
             break;
         }
     }
+    #[cfg(test)]
     dbg!(dir);
     if dir >= 24 {
         return None;
     }
     assert!(dir < 24);
     let offset = from.0 - map_point_dir(to.0, dir);
+    #[cfg(test)]
     dbg!(offset);
     assert_eq!(map_point_dir(to.1, dir) + offset, from.1);
     Some((dir, offset))
@@ -150,7 +157,8 @@ impl Scanner {
         count
     }
 
-    pub fn merge(&mut self, other: Scanner) {
+    // returns other scanner's position
+    pub fn merge(&mut self, other: Scanner) -> Point {
         for (d, my_idx) in &self.distances {
             if let Some(other_idx) = other.distances.get(d) {
                 // Possibly matching pairs of points
@@ -176,9 +184,10 @@ impl Scanner {
                 for (&k,&(i, j)) in other.distances.iter() {
                     self.distances.insert(k, (i+orig_num_beacons, j+orig_num_beacons));
                 }
-                break;
+                return map_point_dir(Point { x:0, y:0, z:0 }, dir) + offset;
             }
         }
+        panic!()
     }
 }
 
@@ -205,19 +214,45 @@ fn part1(data: &Data) -> usize {
     let (_, mut map) = scanners.remove(0);
     while !scanners.is_empty() {
         let mut other_idx = None;
-        for (idx, (i, other)) in scanners.iter().enumerate() {
+        for (idx, (_i, other)) in scanners.iter().enumerate() {
             if map.num_distance_overlaps(other) >= 66 {
                 other_idx = Some(idx);
                 break;
             }
         };
-        let (i, other) = scanners.remove(other_idx.unwrap());
+        let (_i, other) = scanners.remove(other_idx.unwrap());
         map.merge(other);
     }
     map.beacons_set.len()
 }
-fn part2(data: &Data) -> usize {
-    unimplemented!()
+fn part2(data: &Data) -> isize {
+    #[cfg(test)]
+    println!("{} scanners", data.len());
+
+    let mut scanners = data.iter()
+                           .cloned()
+                           .enumerate()
+                           .collect::<Vec<_>>();
+    let (_, mut map) = scanners.remove(0);
+    let mut locations = vec![Point { x: 0, y: 0, z: 0 }];
+    while !scanners.is_empty() {
+        let mut other_idx = None;
+        for (idx, (_i, other)) in scanners.iter().enumerate() {
+            if map.num_distance_overlaps(other) >= 66 {
+                other_idx = Some(idx);
+                break;
+            }
+        };
+        let (_i, other) = scanners.remove(other_idx.unwrap());
+        locations.push(map.merge(other));
+    }
+    locations.iter()
+             .map(|&pt| locations.iter()
+                                .map(|&pt2| (pt2-pt).manhattan())
+                                .max()
+                                .unwrap())
+             .max()
+             .unwrap()
 }
 
 #[test]
@@ -361,7 +396,7 @@ fn test() {
     let data = parse_input(&tests);
 
     assert_eq!(part1(&data), 79);
-    assert_eq!(part2(&data), 0);
+    assert_eq!(part2(&data), 3621);
 }
 
 fn main() -> std::io::Result<()>{
