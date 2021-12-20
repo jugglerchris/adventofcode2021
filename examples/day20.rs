@@ -4,6 +4,7 @@ use adventofcode2021::get_input;
 struct Data {
     algo: Vec<bool>,
     image: Vec<Vec<bool>>,
+    default: bool,
 }
 
 impl Data {
@@ -26,14 +27,19 @@ impl Data {
             new_field.push(new_line);
         }
         self.image = new_field;
+        self.default = if self.default {
+            self.algo[0o777]
+        } else {
+            self.algo[0]
+        };
     }
     fn get(&self, x: isize, y: isize) -> bool {
         if x >=0 && y >= 0 {
             let x = x as usize;
             let y = y as usize;
-            *self.image.get(y).and_then(|line| line.get(x)).unwrap_or(&false)
+            *self.image.get(y).and_then(|line| line.get(x)).unwrap_or(&self.default)
         } else {
-            false
+            self.default
         }
     }
     fn count_set(&self) -> usize {
@@ -74,16 +80,18 @@ fn parse_input(input: &str) -> Data {
     Data {
         algo: algo,
         image: lines,
+        default: false,
     }
 }
 
 fn part1(data: &Data) -> usize {
     let mut data = (*data).clone();
-    #[cfg(test)] data.print();
+    /*#[cfg(test)]*/ data.print();
     data.step();
-    #[cfg(test)] data.print();
+    /*#[cfg(test)]*/ data.print();
     data.step();
-    #[cfg(test)] data.print();
+    /*#[cfg(test)]*/ data.print();
+    dbg!(data.image.len(), data.image[0].len());
     data.count_set()
 }
 fn part2(data: &Data) -> usize {
@@ -100,7 +108,6 @@ fn test() {
 ..#..
 ..###"#;
     let data = parse_input(&tests);
-    dbg!(&data);
 
     assert_eq!(part1(&data), 35);
     assert_eq!(part2(&data), 0);
