@@ -86,16 +86,19 @@ fn parse_input(input: &str) -> Data {
 
 fn part1(data: &Data) -> usize {
     let mut data = (*data).clone();
-    /*#[cfg(test)]*/ data.print();
+    #[cfg(test)] data.print();
     data.step();
-    /*#[cfg(test)]*/ data.print();
+    #[cfg(test)] data.print();
     data.step();
-    /*#[cfg(test)]*/ data.print();
-    dbg!(data.image.len(), data.image[0].len());
+    #[cfg(test)] data.print();
     data.count_set()
 }
 fn part2(data: &Data) -> usize {
-    unimplemented!()
+    let mut data = (*data).clone();
+    for _ in 0..50 {
+        data.step();
+    }
+    data.count_set()
 }
 
 #[test]
@@ -110,7 +113,7 @@ fn test() {
     let data = parse_input(&tests);
 
     assert_eq!(part1(&data), 35);
-    assert_eq!(part2(&data), 0);
+    assert_eq!(part2(&data), 3351);
 }
 
 fn main() -> std::io::Result<()>{
