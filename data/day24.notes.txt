@@ -1,0 +1,304 @@
+inp w     w = inp.0
+mul x 0   x = 0
+add x z   x = 0
+mod x 26  x = 0
+div z 1   z = 0
+add x 14  x = 14
+eql x w   x = 0
+eql x 0   x = 1
+mul y 0   
+add y 25  y = 25
+mul y x   y = 25
+add y 1   y = 26
+mul z y   z = 0
+mul y 0   y = 0
+add y w   y = inp.0
+add y 12  y = inp.0 + 12
+mul y x   y = inp.0 + 12
+add z y   
+
+z = inp.0 + 12
+
+PUSH(inp + 12)
+
+inp w
+mul x 0      x = 0
+add x z      x = z.0
+mod x 26     x = z.0 % 26
+div z 1
+add x 15     x = z.0 % 26 + 15
+eql x w      
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 7
+mul y x
+add z y
+
+if inp.0 != top+15 {
+    PUSH(inp+7)
+}
+x = (z % 26)+15
+if (x != w) {
+    z *= 26;
+    z += w+7;
+}
+
+inp w
+mul x 0
+add x z
+mod x 26
+div z 1
+add x 12
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 1
+mul y x
+add z y
+
+if (inp != top + 12) {
+    PUSH(w+1)
+}
+
+inp w
+mul x 0
+add x z
+mod x 26
+div z 1
+add x 11
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 2
+mul y x
+add z y
+
+PUSH(w+2)
+
+inp w
+mul x 0
+add x z
+mod x 26
+div z 26
+add x -5
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 4
+mul y x
+add z y
+
+if (inp != pop() - 5) {
+    PUSH(inp+4)
+}
+
+inp w
+mul x 0
+add x z
+mod x 26
+div z 1
+add x 14
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 15
+mul y x
+add z y
+
+if (inp != top()+14) {
+    PUSH(inp+15)
+}
+
+inp w
+mul x 0
+add x z
+mod x 26
+div z 1
+add x 15
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 11
+mul y x
+add z y
+
+if (inp != top() + 15) {
+    PUSH(inp+11)
+}
+
+inp w
+mul x 0
+add x z
+mod x 26
+div z 26
+add x -13
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 5
+mul y x
+add z y
+
+inp w
+mul x 0
+add x z
+mod x 26
+div z 26
+add x -16
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 3
+mul y x
+add z y
+
+inp w
+mul x 0
+add x z
+mod x 26
+div z 26
+add x -8
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 9
+mul y x
+add z y
+
+inp w
+mul x 0
+add x z
+mod x 26
+div z 1
+add x 15
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 2
+mul y x
+add z y
+
+inp w
+mul x 0
+add x z
+mod x 26
+div z 26
+add x -8
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 3
+mul y x
+add z y
+
+inp w
+mul x 0
+add x z
+mod x 26
+div z 26
+add x 0
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 3
+mul y x
+add z y
+
+inp w           w = inp.14
+mul x 0         x = 0
+add x z         x = z.13
+mod x 26        x = z.13 % 26
+div z 26        z = z.13 / 26
+add x -4        x = (z.13 % 26) - 4
+eql x w         x = ((z.13 % 26) -4) == inp.14
+eql x 0         x = !(((z.13 % 26) -4) == inp.14)
+mul y 0         y = 0
+add y 25        y = 25
+mul y x         y = 25*x
+add y 1         y = 25*x + 1
+mul z y         z = (25*x + 1) * (z.13/26)
+mul y 0         y = 0
+add y w         y = inp.14
+add y 11        y = inp.14 + 11
+mul y x         y *= x
+add z y         z += y
+
+w = inp.14
+if (z%26)-4 != w {
+    z = 26 * (z.13/26)
+    z += (w+11)
+} else {
+    z = z.13/26
+}
